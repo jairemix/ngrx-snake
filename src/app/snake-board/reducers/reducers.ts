@@ -5,6 +5,7 @@ import { SnakeBoardAction,
   TickAction,
   SnakeMoveAction,
   SnakeChangeDirectionAction,
+  SnakeCollisionAction,
 } from '../actions/snake-board.actions';
 import { omit, map } from 'lodash-es';
 
@@ -74,6 +75,13 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
           ...state.snake,
           direction,
         },
+      };
+    }
+
+    case SnakeCollisionAction.prototype.type: {
+      return {
+        ...state,
+        hasLost: true,
       };
     }
 

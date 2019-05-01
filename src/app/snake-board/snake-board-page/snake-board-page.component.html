@@ -1,5 +1,7 @@
 <app-grid [grid]="grid$ | async">
-  <h2 *ngIf="!isPlaying">Press spacebar to start</h2>
+  <h2 *ngIf="!isPlaying">
+    {{(hasLost$ | async) ? 'Game Over' : 'Press spacebar to start'}}
+  </h2>
   <app-snake [snake]="snake$ | async"></app-snake>
 </app-grid>
 

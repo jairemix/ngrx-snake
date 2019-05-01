@@ -3,6 +3,8 @@ import { Direction, directionToVector } from 'src/app/utils/cartesian-geometry';
 
 export interface SnakeBoardState {
   isPlaying: boolean;
+  hasLost: boolean;
+
   tickInterval?: number;
   tickCount: number;
   snake: SnakeState;
@@ -41,6 +43,7 @@ const getInitialSnake = (length: number, tailX: number, tailY: number, direction
 const getInitialBoard = (CELL_SIZE: number, WIDTH: number, HEIGHT: number, INIT_SNAKE_LENGTH: number): SnakeBoardState => {
   return {
     isPlaying: false,
+    hasLost: false,
     tickCount: 0,
     grid: {
       CELL_SIZE,

@@ -3,9 +3,9 @@ import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, HostListener } f
 import { Observable, Subject } from 'rxjs';
 import { PlayAction, PauseAction, SnakeChangeDirectionAction } from '../actions/snake-board.actions';
 import { SnakeState, GridState } from '../state/snake-board.state';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map as mapRx } from 'rxjs/operators';
 import { Direction } from 'src/app/utils/cartesian-geometry';
-import { isPlaying, getGrid, getSnake } from '../selectors/selectors';
+import { isPlaying, getGrid, getSnake, getSnakeBoardState } from '../selectors/selectors';
 
 @Component({
   selector: 'app-snake-board-page',
@@ -21,8 +21,10 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
   snake$: Observable<SnakeState>;
   snake: SnakeState;
   grid$: Observable<GridState>;
+  hasLost$: Observable<boolean>;
 
   constructor(private store: Store<any>) {
+    this.hasLost$ = this.store.pipe(select(getSnakeBoardState), mapRx((s) => s.hasLost));
     this.isPlaying$ = this.store.pipe(select(isPlaying));
     this.isPlaying$.pipe(
       takeUntil(this.destroyed$),
