@@ -1,6 +1,14 @@
 import { createFeatureSelector, createSelector, Action } from '@ngrx/store';
-import { TickAction, PlayAction, PauseAction, SnakeMoveAction, SnakeBoardAction } from '../actions/snake-board.actions';
+import {
+  TickAction,
+  PlayAction,
+  PauseAction,
+  SnakeMoveAction,
+  SnakeBoardAction,
+  SnakeChangeDirectionAction,
+} from '../actions/snake-board.actions';
 import { range, map, omit } from 'lodash-es';
+import { Direction, directionToVector } from 'src/app/utils/cartesian-geometry';
 
 export interface SnakeBoardState {
   isPlaying: boolean;
@@ -18,7 +26,7 @@ export interface GridState {
 
 export interface SnakeState {
   blocks: Block[]; // snake head is at last index
-  direction: SnakeDirection;
+  direction: Direction;
 }
 
 export interface Block {
@@ -26,23 +34,16 @@ export interface Block {
   y: number;
 }
 
-export enum SnakeDirection {
-  UP,
-  RIGHT,
-  BOTTOM,
-  LEFT
-}
-
-const getDisplacementVector = (direction: SnakeDirection, magnitude: number): { x: number, y: number } => {
+const getDisplacementVector = (direction: Direction, magnitude: number): { x: number, y: number } => {
   switch (direction) {
-    case SnakeDirection.UP: return { x: 0, y: -magnitude };
-    case SnakeDirection.RIGHT: return { x: magnitude, y: 0 };
-    case SnakeDirection.BOTTOM: return { x: 0, y: magnitude };
-    case SnakeDirection.LEFT: return { x: -magnitude, y: 0 };
+    case Direction.UP: return { x: 0, y: -magnitude };
+    case Direction.RIGHT: return { x: magnitude, y: 0 };
+    case Direction.DOWN: return { x: 0, y: magnitude };
+    case Direction.LEFT: return { x: -magnitude, y: 0 };
   }
 };
 
-const getInitialSnake = (length: number, tailX: number, tailY: number, direction: SnakeDirection, cellSize: number): SnakeState => {
+const getInitialSnake = (length: number, tailX: number, tailY: number, direction: Direction, cellSize: number): SnakeState => {
   const displacement = getDisplacementVector(direction, cellSize);
   return {
     blocks: map(range(0, length), (indicesFromTail) => {
@@ -64,7 +65,7 @@ const getInitialBoard = (CELL_SIZE: number, WIDTH: number, HEIGHT: number, INIT_
       WIDTH,
       HEIGHT,
     },
-    snake: getInitialSnake(INIT_SNAKE_LENGTH, CELL_SIZE, CELL_SIZE, SnakeDirection.RIGHT, CELL_SIZE),
+    snake: getInitialSnake(INIT_SNAKE_LENGTH, CELL_SIZE, CELL_SIZE, Direction.RIGHT, CELL_SIZE),
   };
 };
 
@@ -79,6 +80,14 @@ export const getSnakeBoardState = createFeatureSelector<any, SnakeBoardState>('s
 export const isPlaying = createSelector(getSnakeBoardState, (state) => state.isPlaying);
 
 export const getSnake = createSelector(getSnakeBoardState, (state) => state.snake);
+
+export const getGrid = createSelector(getSnakeBoardState, (state) => state.grid);
+
+export const getSnakeDirection = createSelector(getSnake, (snake) => snake.direction);
+
+export const getSnakeVelocity = createSelector(getSnakeDirection, getGrid, (direction, grid) => {
+  return directionToVector(direction, grid.CELL_SIZE);
+});
 
 /**
  * To be replaced by createReducer and on(Action) with ngrx 8. This allows us to avoid long switch blocks
@@ -134,6 +143,17 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
         snake: {
           ...snake,
           blocks: newBlocks,
+        },
+      };
+    }
+
+    case SnakeChangeDirectionAction.prototype.type: {
+      const direction = action.payload;
+      return {
+        ...state,
+        snake: {
+          ...state.snake,
+          direction,
         },
       };
     }

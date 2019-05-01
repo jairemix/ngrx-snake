@@ -1,9 +1,11 @@
+import { getSnakeBoardState, getSnakeVelocity } from './../state/snake-board.state';
 import { Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { PlayAction, TickAction, PauseAction, SnakeMoveAction } from '../actions/snake-board.actions';
-import { switchMap, filter, mergeMap } from 'rxjs/operators';
+import { switchMap, filter, mergeMap, withLatestFrom } from 'rxjs/operators';
 import { interval, of, empty } from 'rxjs';
+import { directionToVector } from 'src/app/utils/cartesian-geometry';
 
 // new syntax -> createEffect
 
@@ -26,11 +28,9 @@ export class PartyEffects {
   @Effect()
   snakeMove$ = this.actions$.pipe(
     ofType(TickAction.prototype.type),
-    mergeMap(() => {
-      return of(new SnakeMoveAction({
-        x: 10,
-        y: 0, // grab from store
-      }));
+    withLatestFrom(this.store.select(getSnakeVelocity)),
+    mergeMap(([_, velocity]) => {
+      return of(new SnakeMoveAction(velocity)); // displacement = velocity * 1 tick
     }),
   );
 
