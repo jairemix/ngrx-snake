@@ -2,9 +2,10 @@ import { Store, select } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, HostListener } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { PlayAction, PauseAction, SnakeChangeDirectionAction } from '../actions/snake-board.actions';
-import { isPlaying, getSnake, SnakeState, getSnakeBoardState, GridState, getGrid } from '../state/snake-board.state';
-import { takeUntil, map as mapRx, tap, distinctUntilChanged } from 'rxjs/operators';
+import { SnakeState, GridState } from '../state/snake-board.state';
+import { takeUntil } from 'rxjs/operators';
 import { Direction } from 'src/app/utils/cartesian-geometry';
+import { isPlaying, getGrid, getSnake } from '../selectors/selectors';
 
 @Component({
   selector: 'app-snake-board-page',

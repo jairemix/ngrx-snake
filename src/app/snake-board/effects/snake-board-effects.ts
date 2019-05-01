@@ -1,11 +1,10 @@
-import { getSnakeBoardState, getSnakeVelocity } from './../state/snake-board.state';
 import { Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { PlayAction, TickAction, PauseAction, SnakeMoveAction } from '../actions/snake-board.actions';
 import { switchMap, filter, mergeMap, withLatestFrom } from 'rxjs/operators';
 import { interval, of, empty } from 'rxjs';
-import { directionToVector } from 'src/app/utils/cartesian-geometry';
+import { getSnakeVelocity } from '../selectors/selectors';
 
 // new syntax -> createEffect
 
@@ -33,38 +32,6 @@ export class PartyEffects {
       return of(new SnakeMoveAction(velocity)); // displacement = velocity * 1 tick
     }),
   );
-
-  // @Effect()
-  // persistParty$ = this.actions$.pipe(
-  //   ofType(PartyActionsEnum.PersistParty),
-  //   withLatestFrom(this.store.select(getPartyState)),
-  //   switchMap(([_, partyStateModel]: [PersistPartyAction, PartyStateModel]) => {
-  //     // switchMap because we want to persist only the latest state
-  //     const toPersist = omit(partyStateModel, 'loaded', 'loadError', 'persistError');
-  //     return this.partyService.setParty(toPersist).pipe(
-  //       mapRx(__ => new PersistPartySuccessAction()),
-  //       catchError((e) => of(new PersistPartyErrorAction(e))),
-  //     );
-  //   }),
-  // );
-
-  // @Effect()
-  // createAdventurer$ = this.actions$.pipe(
-  //   ofType(PartyActionsEnum.CreateAdventurer),
-  //   mapRx(() => new PersistPartyAction()),
-  // );
-
-  // @Effect()
-  // updateAdventurer$ = this.actions$.pipe(
-  //   ofType(PartyActionsEnum.UpdateAdventurer),
-  //   mapRx(() => new PersistPartyAction()),
-  // );
-
-  // @Effect()
-  // deleteAdventurer$ = this.actions$.pipe(
-  //   ofType(PartyActionsEnum.DeleteAdventurer),
-  //   mapRx(() => new PersistPartyAction()),
-  // );
 
   constructor(
     private actions$: Actions,

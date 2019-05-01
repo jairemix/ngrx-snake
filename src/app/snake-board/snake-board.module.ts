@@ -5,10 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SnakeBoardPageComponent } from './snake-board-page/snake-board-page.component';
 import { RouterModule, Route } from '@angular/router';
 import { StoreModule } from '@ngrx/store';
-import { snakeBoardReducer } from './state/snake-board.state';
 import { EffectsModule } from '@ngrx/effects';
 import { SnakeComponent } from './snake/snake.component';
 import { GridComponent } from './grid/grid.component';
+import { snakeBoardReducer } from './reducers/reducers';
 
 const routes: Route[] = [
   {
