@@ -1,4 +1,4 @@
 <div class="snake">
-  <div class="snake-block" *ngFor="let block of snakeBlocks" [ngStyle]="{ left: block.x + 'px', top: block.y + 'px' }">
+  <div class="snake-block" *ngFor="let block of snake.blocks; trackBy: trackByIndex" [ngStyle]="{ left: block.x + 'px', top: block.y + 'px' }">
   </div>
 </div>

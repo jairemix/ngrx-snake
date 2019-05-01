@@ -8,7 +8,7 @@ import { range, map } from 'lodash-es';
   styleUrls: ['./snake.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SnakeComponent implements OnChanges {
+export class SnakeComponent {
 
   @Input() snake: SnakeState;
   snakeBlocks: {
@@ -16,19 +16,14 @@ export class SnakeComponent implements OnChanges {
     y: number,
   }[];
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.snake) {
-      this.snakeBlocks = this.getSnakeBlocks(this.snake);
-    }
-  }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes.snake) {
+  //     this.snakeBlocks = this.getSnakeBlocks(this.snake);
+  //   }
+  // }
 
-  private getSnakeBlocks(snake: SnakeState) {
-    return map(range(0, snake.length), (index) => {
-      return {
-        x: snake.headX - (index * 10),
-        y: snake.headY,
-      };
-    });
+  trackByIndex(index: number, _: any) {
+    return index;
   }
 
 }

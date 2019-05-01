@@ -1,6 +1,6 @@
-<div class="snake-grid">
+<app-grid [grid]="grid$ | async">
   <app-snake [snake]="snake$ | async"></app-snake>
-</div>
+</app-grid>
 
 <h2 *ngIf="!isPlaying">Press spacebar to start</h2>
 <button (click)="isPlaying ? pause() : play()">{{(isPlaying$ | async) ? 'Pause' : 'Play'}}</button>

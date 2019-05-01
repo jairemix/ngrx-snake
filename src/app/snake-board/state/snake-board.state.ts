@@ -7,31 +7,68 @@ export interface SnakeBoardState {
   tickInterval?: number;
   tickCount: number;
   snake: SnakeState;
-
-  readonly cellSize: number;
-  // readonly width: number;
-  // readonly height: number;
+  grid: GridState;
 }
 
-// TODO: think of how to encode state
+export interface GridState {
+  CELL_SIZE: number;
+  WIDTH: number;
+  HEIGHT: number;
+}
+
 export interface SnakeState {
-  length: number;
-  headX: number;
-  headY: number;
-  // segments??
+  blocks: Block[]; // snake head is at last index
+  direction: SnakeDirection;
 }
 
-const initialState: SnakeBoardState = {
-  isPlaying: false,
-  tickCount: 0,
-  cellSize: 10, // NOTE: unused
-  snake: {
-    length: 3,
-    headX: 30,
-    headY: 10,
-    // snake direction
+export interface Block {
+  x: number;
+  y: number;
+}
+
+export enum SnakeDirection {
+  UP,
+  RIGHT,
+  BOTTOM,
+  LEFT
+}
+
+const getDisplacementVector = (direction: SnakeDirection, magnitude: number): { x: number, y: number } => {
+  switch (direction) {
+    case SnakeDirection.UP: return { x: 0, y: -magnitude };
+    case SnakeDirection.RIGHT: return { x: magnitude, y: 0 };
+    case SnakeDirection.BOTTOM: return { x: 0, y: magnitude };
+    case SnakeDirection.LEFT: return { x: -magnitude, y: 0 };
   }
 };
+
+const getInitialSnake = (length: number, tailX: number, tailY: number, direction: SnakeDirection, cellSize: number): SnakeState => {
+  const displacement = getDisplacementVector(direction, cellSize);
+  return {
+    blocks: map(range(0, length), (indicesFromTail) => {
+      return {
+        x: tailX + (displacement.x * indicesFromTail),
+        y: tailY + (displacement.y * indicesFromTail),
+      };
+    }),
+    direction,
+  };
+};
+
+const getInitialBoard = (CELL_SIZE: number, WIDTH: number, HEIGHT: number, INIT_SNAKE_LENGTH: number): SnakeBoardState => {
+  return {
+    isPlaying: false,
+    tickCount: 0,
+    grid: {
+      CELL_SIZE,
+      WIDTH,
+      HEIGHT,
+    },
+    snake: getInitialSnake(INIT_SNAKE_LENGTH, CELL_SIZE, CELL_SIZE, SnakeDirection.RIGHT, CELL_SIZE),
+  };
+};
+
+const initialState = getInitialBoard(10, 500, 500, 3);
 
 /**
  * The createFeatureSelector function selects a piece of state from the root of the state object.
@@ -73,13 +110,30 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
 
     case SnakeMoveAction.prototype.type: {
       const snake = state.snake;
-      const payload = action.payload;
+      const displacementVector = action.payload;
+      const oldBlocks = snake.blocks;
+      const newBlocks = map(oldBlocks, (currentBlock, index) => {
+        const nextBlock = oldBlocks[index + 1];
+        if (nextBlock) { // currentBlock is not head -> follow next block
+          return {
+            ...currentBlock, // do not directly copy nextBlock since we might have some other block properties (e.g. color) in the future!
+            x: nextBlock.x,
+            y: nextBlock.y,
+          };
+        } else { // head -> follow displacementVector
+          return {
+            ...currentBlock,
+            x: currentBlock.x + displacementVector.x,
+            y: currentBlock.y + displacementVector.y,
+          };
+        }
+      });
+
       return {
         ...state,
         snake: {
           ...snake,
-          headX: snake.headX + payload.x,
-          headY: snake.headY + payload.y,
+          blocks: newBlocks,
         },
       };
     }

@@ -2,8 +2,8 @@ import { Store, select } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, HostListener } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { PlayAction, PauseAction } from '../actions/snake-board.actions';
-import { isPlaying, getSnake, SnakeState } from '../state/snake-board.state';
-import { takeUntil } from 'rxjs/operators';
+import { isPlaying, getSnake, SnakeState, getSnakeBoardState, GridState } from '../state/snake-board.state';
+import { takeUntil, map as mapRx, tap, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-snake-board-page',
@@ -17,6 +17,7 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
 
   destroyed$ = new Subject<void>();
   snake$: Observable<SnakeState>;
+  grid$: Observable<GridState>;
 
   constructor(private store: Store<any>) {
     this.isPlaying$ = this.store.pipe(select(isPlaying));
@@ -24,6 +25,10 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed$),
     ).subscribe((p) => this.isPlaying = p);
 
+    this.grid$ = this.store.pipe(
+      select(getSnakeBoardState),
+      mapRx(s => s.grid),
+    );
     this.snake$ = this.store.pipe(select(getSnake));
   }
 

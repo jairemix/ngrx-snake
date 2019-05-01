@@ -8,6 +8,7 @@ import { StoreModule } from '@ngrx/store';
 import { snakeBoardReducer } from './state/snake-board.state';
 import { EffectsModule } from '@ngrx/effects';
 import { SnakeComponent } from './snake/snake.component';
+import { GridComponent } from './grid/grid.component';
 
 const routes: Route[] = [
   {
@@ -33,6 +34,7 @@ const routes: Route[] = [
   declarations: [
     SnakeBoardPageComponent,
     SnakeComponent,
+    GridComponent,
   ],
   providers: [
   ],
