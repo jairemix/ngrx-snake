@@ -9,7 +9,7 @@ import { PlayAction,
 } from '../actions/snake-board.actions';
 import { switchMap, filter, mergeMap, withLatestFrom, distinctUntilChanged, map as mapRx } from 'rxjs/operators';
 import { interval, of, empty } from 'rxjs';
-import { getSnakeVelocity, getSnakeBoardState, getSnake } from '../selectors/selectors';
+import { getSnakeVelocity, getSnakeBoardState } from '../selectors/selectors';
 
 // new syntax -> createEffect
 

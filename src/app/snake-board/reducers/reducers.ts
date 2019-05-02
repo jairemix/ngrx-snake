@@ -54,7 +54,7 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
           ...state,
           snake: {
             ...state.snake,
-            direction: snake.newDirection !== void(0) ? snake.newDirection : snake.direction,
+            direction: snake.newDirection,
             newDirection: void(0),
           },
         };

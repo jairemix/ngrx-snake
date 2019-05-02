@@ -48,7 +48,7 @@ const routes: Route[] = [
      * See: https://github.com/zalmoxisus/redux-devtools-extension
      */
     StoreDevtoolsModule.instrument({
-      name: 'NgRx Book Store App',
+      name: 'NgRx Snake',
       // In a production build you would want to disable the Store Devtools
       logOnly: environment.production,
     }),
