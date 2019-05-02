@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { GridState } from '../state/snake-board.state';
+import { GridSettingsState } from '../state/snake-board.state';
 
 @Component({
   selector: 'app-grid',
@@ -9,6 +9,6 @@ import { GridState } from '../state/snake-board.state';
 })
 export class GridComponent {
 
-  @Input() grid: GridState;
+  @Input() settings: GridSettingsState;
 
 }

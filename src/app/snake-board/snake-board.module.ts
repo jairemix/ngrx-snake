@@ -9,6 +9,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { SnakeComponent } from './snake/snake.component';
 import { GridComponent } from './grid/grid.component';
 import { snakeBoardReducer } from './reducers/reducers';
+import { PixelsPipe } from './pipes/pixels.pipe';
+import { GridItemComponent } from './grid-item/grid-item.component';
 
 const routes: Route[] = [
   {
@@ -35,6 +37,8 @@ const routes: Route[] = [
     SnakeBoardPageComponent,
     SnakeComponent,
     GridComponent,
+    PixelsPipe,
+    GridItemComponent,
   ],
   providers: [
   ],

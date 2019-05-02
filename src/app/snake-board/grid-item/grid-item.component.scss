@@ -1,0 +1,9 @@
+.block {
+  position: absolute;
+  background-color: #999;
+  display: inline-block;
+}
+
+.block.block--food {
+  background-color: brown;
+}

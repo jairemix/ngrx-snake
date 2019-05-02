@@ -2,10 +2,10 @@ import { Store, select } from '@ngrx/store';
 import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, HostListener } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { PlayAction, PauseAction, SnakeChangeDirectionAction } from '../actions/snake-board.actions';
-import { SnakeState, GridState } from '../state/snake-board.state';
+import { SnakeState, GridSettingsState, FoodItem } from '../state/snake-board.state';
 import { takeUntil, map as mapRx } from 'rxjs/operators';
 import { Direction } from 'src/app/utils/cartesian-geometry';
-import { isPlaying, getGrid, getSnake, getSnakeBoardState } from '../selectors/selectors';
+import { isPlaying, getGridSettings, getSnake, getSnakeBoardState, getFoodItems } from '../selectors/selectors';
 
 @Component({
   selector: 'app-snake-board-page',
@@ -20,8 +20,9 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
   destroyed$ = new Subject<void>();
   snake$: Observable<SnakeState>;
   snake: SnakeState;
-  grid$: Observable<GridState>;
+  gridSettings$: Observable<GridSettingsState>;
   hasLost$: Observable<boolean>;
+  foodItems$: Observable<FoodItem[]>;
 
   constructor(private store: Store<any>) {
     this.hasLost$ = this.store.pipe(select(getSnakeBoardState), mapRx((s) => s.hasLost));
@@ -30,11 +31,14 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed$),
     ).subscribe((p) => this.isPlaying = p);
 
-    this.grid$ = this.store.pipe(select(getGrid));
+    this.gridSettings$ = this.store.pipe(select(getGridSettings));
     this.snake$ = this.store.pipe(select(getSnake));
     this.snake$.pipe(
       takeUntil(this.destroyed$),
     ).subscribe((s) => this.snake = s);
+
+    this.foodItems$ = this.store.pipe(select(getFoodItems));
+
   }
 
   @HostListener('document:keydown.space', ['$event'])
@@ -80,8 +84,8 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
   }
 
   play() {
-    this.store.dispatch(new PlayAction(1000));
-    // this.store.dispatch(new PlayAction(100));
+    // this.store.dispatch(new PlayAction(1000));
+    this.store.dispatch(new PlayAction(100));
   }
 
   pause() {

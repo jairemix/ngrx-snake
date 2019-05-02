@@ -50,7 +50,7 @@ export class PartyEffects {
     ofType(SnakeBeforeMoveAction.prototype.type),
     withLatestFrom(this.store.select(getSnakeVelocity)),
     mergeMap(([_, velocity]) => {
-      return of(new SnakeMoveAction(velocity));
+      return of(new SnakeMoveAction(velocity)); // displacement = velocity * 1 tick
     }),
   );
 

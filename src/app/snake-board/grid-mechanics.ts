@@ -1,19 +1,19 @@
-import { Block, GridState, SnakeState } from './state/snake-board.state';
-import { Vector } from '../utils/cartesian-geometry';
-import { map } from 'lodash-es';
+import { Block, GridSettingsState } from './state/snake-board.state';
+import { Vector, Position } from '../utils/cartesian-geometry';
+import { map, random } from 'lodash-es';
 
 /**
  * checks if any imminent displacement to the block is going to cause a collision with the grid walls
  * @param block block that will be displaced
  * @param displacement displacement that the block will undergo
- * @param grid game grid
+ * @param gridSettings game grid
  */
-export function checkWallCollision(block: Block, displacement: Vector, grid: GridState): boolean {
+export function checkWallCollision(block: Block, displacement: Vector, gridSettings: GridSettingsState): boolean {
 
   const minX = 0;
-  const maxX = grid.WIDTH;
+  const maxX = gridSettings.WIDTH;
   const minY = 0;
-  const maxY = grid.HEIGHT;
+  const maxY = gridSettings.HEIGHT;
 
   // if (block.x < 30) {
   //   console.log({
@@ -58,4 +58,22 @@ export function moveSnakeBlocks(blocks: Block[], displacement: Vector): Block[] 
 
 export function getSnakeHead(blocks: Block[]) {
   return blocks[0];
+}
+
+// may use currying for gridSettings??
+export function getPositionFromCell(gridSettings: GridSettingsState, cellPosition: { col: number, row: number }): Position {
+  const CELL_SIZE = gridSettings.CELL_SIZE;
+  return {
+    x: CELL_SIZE * cellPosition.col,
+    y: CELL_SIZE * cellPosition.row,
+  };
+}
+
+export function getRandomCellPosition(gridSettings: GridSettingsState): { col: number, row: number } {
+  const COLS = gridSettings.WIDTH / gridSettings.CELL_SIZE;
+  const ROWS = gridSettings.HEIGHT / gridSettings.CELL_SIZE;
+  return {
+    col: random(0, COLS - 1),
+    row: random(0, ROWS - 1),
+  };
 }

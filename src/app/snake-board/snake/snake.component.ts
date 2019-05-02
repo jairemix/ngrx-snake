@@ -11,10 +11,6 @@ import { range, map } from 'lodash-es';
 export class SnakeComponent {
 
   @Input() snake: SnakeState;
-  snakeBlocks: {
-    x: number,
-    y: number,
-  }[];
 
   // ngOnChanges(changes: SimpleChanges) {
   //   if (changes.snake) {

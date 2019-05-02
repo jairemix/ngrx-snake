@@ -69,7 +69,7 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
       const displacement = action.payload;
       const head = getSnakeHead(snake.blocks);
 
-      if (checkWallCollision(head, displacement, state.grid)) {
+      if (checkWallCollision(head, displacement, state.gridSettings)) {
         return omit({
           ...state,
           // isPlaying: false,

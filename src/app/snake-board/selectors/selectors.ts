@@ -12,10 +12,12 @@ export const isPlaying = createSelector(getSnakeBoardState, (state) => state.isP
 
 export const getSnake = createSelector(getSnakeBoardState, (state) => state.snake);
 
-export const getGrid = createSelector(getSnakeBoardState, (state) => state.grid);
+export const getGridSettings = createSelector(getSnakeBoardState, (state) => state.gridSettings);
 
 export const getSnakeDirection = createSelector(getSnake, (snake) => snake.direction);
 
-export const getSnakeVelocity = createSelector(getSnakeDirection, getGrid, (direction, grid) => {
-  return directionToVector(direction, grid.CELL_SIZE);
+export const getSnakeVelocity = createSelector(getSnakeDirection, getGridSettings, (direction, gridSettings) => {
+  return directionToVector(direction, gridSettings.CELL_SIZE);
 });
+
+export const getFoodItems = createSelector(getSnakeBoardState, (state) => state.foodItems);
