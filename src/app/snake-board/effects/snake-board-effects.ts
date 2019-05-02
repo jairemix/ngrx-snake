@@ -1,15 +1,25 @@
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { PlayAction, TickAction, PauseAction, SnakeMoveAction } from '../actions/snake-board.actions';
-import { switchMap, filter, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, filter, mergeMap, withLatestFrom, distinctUntilChanged, map as mapRx } from 'rxjs/operators';
 import { interval, of, empty } from 'rxjs';
-import { getSnakeVelocity } from '../selectors/selectors';
+import { getSnakeVelocity, getSnakeBoardState } from '../selectors/selectors';
 
 // new syntax -> createEffect
 
 @Injectable()
 export class PartyEffects {
+
+  @Effect()
+  hasLost$ = this.store.pipe(
+    select(getSnakeBoardState),
+    mapRx(state => state.hasLost),
+    distinctUntilChanged(),
+    switchMap((hasLost) => {
+      return hasLost ? of(new PauseAction()) : empty();
+    }),
+  );
 
   @Effect()
   ticker$ = this.actions$.pipe(
@@ -25,7 +35,7 @@ export class PartyEffects {
   );
 
   @Effect()
-  snakeMove$ = this.actions$.pipe(
+  snakeOnTick$ = this.actions$.pipe(
     ofType(TickAction.prototype.type),
     withLatestFrom(this.store.select(getSnakeVelocity)),
     mergeMap(([_, velocity]) => {

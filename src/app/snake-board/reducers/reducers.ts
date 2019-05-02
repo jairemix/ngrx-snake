@@ -54,7 +54,7 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
       if (checkWallCollision(head, displacement, state.grid)) {
         return omit({
           ...state,
-          isPlaying: false,
+          // isPlaying: false,
           hasLost: true,
           snake,
         }, 'tickInterval');
