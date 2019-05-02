@@ -8,6 +8,7 @@ import { ROOT_REDUCERS, metaReducers } from './reducers';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
 
 const routes: Route[] = [
   {
@@ -48,9 +49,8 @@ const routes: Route[] = [
      */
     StoreDevtoolsModule.instrument({
       name: 'NgRx Book Store App',
-
       // In a production build you would want to disable the Store Devtools
-      // logOnly: environment.production,
+      logOnly: environment.production,
     }),
 
     /**

@@ -5,9 +5,9 @@ import { SnakeBoardAction,
   TickAction,
   SnakeMoveAction,
   SnakeChangeDirectionAction,
-  SnakeCollisionAction,
 } from '../actions/snake-board.actions';
 import { omit, map } from 'lodash-es';
+import { moveSnakeBlocks, getSnakeHead, checkWallCollision } from '../grid-mechanics';
 
 /**
  * To be replaced by `createReducer` and `on(Action)` with ngrx 8. This allows us to avoid long switch blocks
@@ -16,11 +16,19 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
   switch (action.type) {
 
     case PlayAction.prototype.type: {
-      return {
-        ...state,
-        isPlaying: true,
-        tickInterval: action.tickInterval,
-      };
+      if (state.hasLost) {
+        return {
+          ...initialState,
+          isPlaying: true,
+          tickInterval: action.tickInterval,
+        };
+      } else {
+        return {
+          ...state,
+          isPlaying: true,
+          tickInterval: action.tickInterval,
+        };
+      }
     }
 
     case PauseAction.prototype.type: {
@@ -38,33 +46,28 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
     }
 
     case SnakeMoveAction.prototype.type: {
-      const snake = state.snake;
-      const displacementVector = action.payload;
-      const oldBlocks = snake.blocks;
-      const newBlocks = map(oldBlocks, (currentBlock, index) => {
-        const nextBlock = oldBlocks[index + 1];
-        if (nextBlock) { // currentBlock is not head -> follow next block
-          return {
-            ...currentBlock, // do not directly copy nextBlock since we might have some other block properties (e.g. color) in the future!
-            x: nextBlock.x,
-            y: nextBlock.y,
-          };
-        } else { // head -> follow displacementVector
-          return {
-            ...currentBlock,
-            x: currentBlock.x + displacementVector.x,
-            y: currentBlock.y + displacementVector.y,
-          };
-        }
-      });
 
-      return {
-        ...state,
-        snake: {
-          ...snake,
-          blocks: newBlocks,
-        },
-      };
+      const snake = state.snake;
+      const displacement = action.payload;
+      const head = getSnakeHead(snake.blocks);
+
+      if (checkWallCollision(head, displacement, state.grid)) {
+        return omit({
+          ...state,
+          isPlaying: false,
+          hasLost: true,
+          snake,
+        }, 'tickInterval');
+      } else {
+        return {
+          ...state,
+          snake: {
+            ...snake,
+            blocks: moveSnakeBlocks(snake.blocks, displacement),
+          },
+        };
+      }
+
     }
 
     case SnakeChangeDirectionAction.prototype.type: {
@@ -75,13 +78,6 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
           ...state.snake,
           direction,
         },
-      };
-    }
-
-    case SnakeCollisionAction.prototype.type: {
-      return {
-        ...state,
-        hasLost: true,
       };
     }
 

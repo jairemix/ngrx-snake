@@ -29,10 +29,5 @@ export class SnakeChangeDirectionAction {
   constructor(readonly payload: Direction) {}
 }
 
-export class SnakeCollisionAction {
-  @setProto('[Snake Board] Snake Collision')
-  readonly type: '[Snake Board] Snake Collision';
-}
-
 export type SnakeBoardAction = PlayAction | PauseAction | TickAction |
-  SnakeMoveAction | SnakeChangeDirectionAction | SnakeCollisionAction;
+  SnakeMoveAction | SnakeChangeDirectionAction;

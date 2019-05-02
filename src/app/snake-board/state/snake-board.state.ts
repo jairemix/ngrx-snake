@@ -23,6 +23,7 @@ export interface SnakeState {
 }
 
 export interface Block {
+  BLOCK_SIZE: number;
   x: number;
   y: number;
 }
@@ -32,6 +33,7 @@ const getInitialSnake = (length: number, tailX: number, tailY: number, direction
   return {
     blocks: map(range(0, length), (indicesFromTail) => {
       return {
+        BLOCK_SIZE: cellSize,
         x: tailX + (displacement.x * indicesFromTail),
         y: tailY + (displacement.y * indicesFromTail),
       };

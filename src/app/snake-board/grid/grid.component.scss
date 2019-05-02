@@ -1,3 +1,4 @@
 .snake-grid {
   border: solid 2px black;
+  position: relative; // important for the snake and other elements to be positioned properly relative to the grid
 }

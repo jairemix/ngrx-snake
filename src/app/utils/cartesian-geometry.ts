@@ -6,7 +6,7 @@ export enum Direction {
   DOWN, // (Math.PI * 3 / 2)rad
 }
 
-export interface Coordinates {
+export interface Position {
   x: number;
   y: number;
 }
