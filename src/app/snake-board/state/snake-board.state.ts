@@ -18,7 +18,7 @@ export interface GridState {
 }
 
 export interface SnakeState {
-  blocks: Block[]; // snake head is at last index
+  blocks: Block[]; // snake head is at index 0 (it is a queue)
   direction: Direction;
 }
 
@@ -30,12 +30,14 @@ export interface Block {
 
 const getInitialSnake = (length: number, tailX: number, tailY: number, direction: Direction, cellSize: number): SnakeState => {
   const displacement = directionToVector(direction, cellSize);
+  const headX = tailX + (cellSize * length);
+  const headY = tailX + (cellSize * length);
   return {
-    blocks: map(range(0, length), (indicesFromTail) => {
+    blocks: map(range(0, length), (indicesFromHead) => {
       return {
         BLOCK_SIZE: cellSize,
-        x: tailX + (displacement.x * indicesFromTail),
-        y: tailY + (displacement.y * indicesFromTail),
+        x: headX - (displacement.x * indicesFromHead),
+        y: headY - (displacement.y * indicesFromHead),
       };
     }),
     direction,

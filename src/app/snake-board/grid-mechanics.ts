@@ -39,7 +39,7 @@ export function checkWallCollision(block: Block, displacement: Vector, grid: Gri
 
 export function moveSnakeBlocks(blocks: Block[], displacement: Vector): Block[] {
   return map(blocks, (currentBlock, index) => {
-    const nextBlock = blocks[index + 1];
+    const nextBlock = blocks[index - 1]; // previous element in the array, nextBlock for the snake (since head is at 0)
     if (nextBlock) { // currentBlock is not head -> follow next block
       return {
         ...currentBlock,
@@ -57,5 +57,5 @@ export function moveSnakeBlocks(blocks: Block[], displacement: Vector): Block[] 
 }
 
 export function getSnakeHead(blocks: Block[]) {
-  return blocks[blocks.length - 1];
+  return blocks[0];
 }
