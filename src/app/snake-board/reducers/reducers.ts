@@ -18,7 +18,8 @@ import {
   checkItemsCollision,
   appendSnakeBlock,
   getPositionFromCell,
-  getRandomCellPosition
+  getRandomCellPosition,
+  checkSelfCollision
 } from '../grid-mechanics';
 
 /**
@@ -82,6 +83,15 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
       const head = getSnakeHead(snake.blocks);
 
       if (checkWallCollision(head, displacement, state.gridSettings)) {
+        return omit({
+          ...state,
+          // isPlaying: false,
+          hasLost: true,
+          snake,
+        }, 'tickInterval');
+      }
+
+      if (checkSelfCollision(snake, displacement)) {
         return omit({
           ...state,
           // isPlaying: false,

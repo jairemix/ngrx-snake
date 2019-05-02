@@ -1,6 +1,6 @@
 import { Block, GridSettingsState, GridItem, SnakeState } from './state/snake-board.state';
 import { Vector, Position } from '../utils/cartesian-geometry';
-import { map, random } from 'lodash-es';
+import { map, random, some } from 'lodash-es';
 
 /**
  * checks if any imminent displacement to the block is going to cause a collision with the grid walls
@@ -35,6 +35,17 @@ export function checkWallCollision(block: Block, displacement: Vector, gridSetti
   } else {
     return false;
   }
+}
+
+// may also use grid matrix??
+export function checkSelfCollision(snake: SnakeState, displacement: Vector) {
+  const head = snake.blocks[0];
+  const futureX = head.x + displacement.x;
+  const futureY = head.y + displacement.y;
+  return some(snake.blocks.slice(1), (block) => {
+    // (does not check partial overlaps, only total overlaps)
+    return futureX === block.x && futureY === block.y;
+  });
 }
 
 export function moveSnakeBlocks(blocks: Block[], displacement: Vector): Block[] {
