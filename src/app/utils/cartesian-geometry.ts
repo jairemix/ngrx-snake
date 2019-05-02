@@ -28,7 +28,7 @@ export function directionToVector(direction: number, magnitude: number): Vector 
     case Direction.DOWN: return { x: 0, y: magnitude };
     case Direction.LEFT: return { x: -magnitude, y: 0 };
   }
-  return directionToVector(directionToAngle(direction), magnitude); // for custom directions
+  return angleToVector(directionToAngle(direction), magnitude); // for custom directions
 }
 
 /**
