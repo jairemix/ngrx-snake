@@ -87,7 +87,7 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
   }
 
   play() {
-    // this.store.dispatch(new PlayAction(1000));
+    // this.store.dispatch(new PlayAction(500));
     this.store.dispatch(new PlayAction(100));
   }
 

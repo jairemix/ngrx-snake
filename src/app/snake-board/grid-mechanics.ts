@@ -77,7 +77,7 @@ export function appendSnakeBlock(gridSettings: GridSettingsState, snake: SnakeSt
 
   // prevent overlaps with wall
   appendedBlock.x = Math.min(Math.max(appendedBlock.x, minX), maxX);
-  appendedBlock.x = Math.min(Math.max(appendedBlock.y, minY), maxY);
+  appendedBlock.y = Math.min(Math.max(appendedBlock.y, minY), maxY);
 
   return {
     ...snake,
