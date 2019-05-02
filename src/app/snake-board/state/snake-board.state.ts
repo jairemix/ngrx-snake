@@ -31,7 +31,7 @@ export interface Block {
 const getInitialSnake = (length: number, tailX: number, tailY: number, direction: Direction, cellSize: number): SnakeState => {
   const displacement = directionToVector(direction, cellSize);
   const headX = tailX + (cellSize * length);
-  const headY = tailX + (cellSize * length);
+  const headY = tailY + (cellSize * length);
   return {
     blocks: map(range(0, length), (indicesFromHead) => {
       return {
