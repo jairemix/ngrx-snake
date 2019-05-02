@@ -5,9 +5,11 @@ import { SnakeBoardAction,
   TickAction,
   SnakeMoveAction,
   SnakeChangeDirectionAction,
+  SnakeBeforeMoveAction,
 } from '../actions/snake-board.actions';
 import { omit, map } from 'lodash-es';
 import { moveSnakeBlocks, getSnakeHead, checkWallCollision } from '../grid-mechanics';
+import { take } from 'rxjs/operators';
 
 /**
  * To be replaced by `createReducer` and `on(Action)` with ngrx 8. This allows us to avoid long switch blocks
@@ -45,6 +47,22 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
       };
     }
 
+    case SnakeBeforeMoveAction.prototype.type: {
+      const snake = state.snake;
+      if (snake.newDirection !== void(0)) { // check snake direction
+        return {
+          ...state,
+          snake: {
+            ...state.snake,
+            direction: snake.newDirection !== void(0) ? snake.newDirection : snake.direction,
+            newDirection: void(0),
+          },
+        };
+      } else {
+        return state;
+      }
+    }
+
     case SnakeMoveAction.prototype.type: {
 
       const snake = state.snake;
@@ -71,12 +89,12 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
     }
 
     case SnakeChangeDirectionAction.prototype.type: {
-      const direction = action.payload;
+      const newDirection = action.payload;
       return {
         ...state,
         snake: {
           ...state.snake,
-          direction,
+          newDirection,
         },
       };
     }

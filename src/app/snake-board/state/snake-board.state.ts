@@ -19,6 +19,7 @@ export interface GridState {
 
 export interface SnakeState {
   blocks: Block[]; // snake head is at index 0 (it is a queue)
+  newDirection?: Direction; // future direction after 1 tick
   direction: Direction;
 }
 

@@ -1,5 +1,6 @@
 import { Direction, Vector } from './../../utils/cartesian-geometry';
 import { setProto } from 'src/app/utils/set-proto.decorator';
+import { Observable } from 'rxjs';
 
 export class PlayAction {
   @setProto('[Snake Board] Play')
@@ -17,6 +18,11 @@ export class TickAction {
   readonly type: '[Snake Board] Tick';
 }
 
+export class SnakeBeforeMoveAction {
+  @setProto('[Snake Board] Snake Before Move Action')
+  readonly type: '[Snake Board] Snake Before Move Action';
+}
+
 export class SnakeMoveAction {
   @setProto('[Snake Board] Snake Move')
   readonly type: '[Snake Board] Snake Move';
@@ -30,4 +36,4 @@ export class SnakeChangeDirectionAction {
 }
 
 export type SnakeBoardAction = PlayAction | PauseAction | TickAction |
-  SnakeMoveAction | SnakeChangeDirectionAction;
+  SnakeMoveAction | SnakeChangeDirectionAction | SnakeBeforeMoveAction;
