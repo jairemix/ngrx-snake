@@ -21,13 +21,14 @@ export interface Vector {
  * @param magnitude vector magnitude
  * @return column matrix of vector
  */
-export function directionToVector(direction: Direction, magnitude: number): Vector {
+export function directionToVector(direction: number, magnitude: number): Vector {
   switch (direction) {
     case Direction.UP: return { x: 0, y: -magnitude };
     case Direction.RIGHT: return { x: magnitude, y: 0 };
     case Direction.DOWN: return { x: 0, y: magnitude };
     case Direction.LEFT: return { x: -magnitude, y: 0 };
   }
+  return directionToVector(directionToAngle(direction), magnitude); // for custom directions
 }
 
 /**
@@ -35,7 +36,7 @@ export function directionToVector(direction: Direction, magnitude: number): Vect
  * @return the angle in radians between the direction and the x-axis
  */
 export function directionToAngle(direction: Direction): number {
-  return direction * Math.PI;
+  return direction * Math.PI / 2;
 }
 
 /**
@@ -47,7 +48,8 @@ export function directionToAngle(direction: Direction): number {
 export function angleToVector(angle: number, magnitude: number, decimalPlaces = 6): Vector {
   return {
     x: roundToDecimalPlaces(magnitude * Math.cos(angle), decimalPlaces),
-    y: roundToDecimalPlaces(magnitude * Math.sin(angle), decimalPlaces),
+    // negative since HTML grid is different to cartesian grid (down is positive)
+    y: -roundToDecimalPlaces(magnitude * Math.sin(angle), decimalPlaces),
   };
 }
 
