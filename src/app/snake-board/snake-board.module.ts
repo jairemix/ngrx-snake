@@ -6,7 +6,6 @@ import { SnakeBoardPageComponent } from './snake-board-page/snake-board-page.com
 import { RouterModule, Route } from '@angular/router';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
-import { SnakeComponent } from './snake/snake.component';
 import { GridComponent } from './grid/grid.component';
 import { snakeBoardReducer } from './reducers/reducers';
 import { PixelsPipe } from './pipes/pixels.pipe';
@@ -35,7 +34,6 @@ const routes: Route[] = [
   ],
   declarations: [
     SnakeBoardPageComponent,
-    SnakeComponent,
     GridComponent,
     PixelsPipe,
     GridItemComponent,

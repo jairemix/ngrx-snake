@@ -5,7 +5,7 @@ import { PlayAction, PauseAction, SnakeChangeDirectionAction } from '../actions/
 import { SnakeState, GridSettingsState, FoodItem } from '../state/snake-board.state';
 import { takeUntil, map as mapRx } from 'rxjs/operators';
 import { Direction } from 'src/app/utils/cartesian-geometry';
-import { isPlaying, getGridSettings, getSnake, getSnakeBoardState, getFoodItems } from '../selectors/selectors';
+import { isPlaying, getGridSettings, getSnake, getSnakeBoardState, getFoodItems, getScore } from '../selectors/selectors';
 
 @Component({
   selector: 'app-snake-board-page',
@@ -23,6 +23,7 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
   gridSettings$: Observable<GridSettingsState>;
   hasLost$: Observable<boolean>;
   foodItems$: Observable<FoodItem[]>;
+  score$: Observable<number>;
 
   constructor(private store: Store<any>) {
     this.hasLost$ = this.store.pipe(select(getSnakeBoardState), mapRx((s) => s.hasLost));
@@ -36,6 +37,8 @@ export class SnakeBoardPageComponent implements OnInit, OnDestroy {
     this.snake$.pipe(
       takeUntil(this.destroyed$),
     ).subscribe((s) => this.snake = s);
+
+    this.score$ = this.store.pipe(select(getScore));
 
     this.foodItems$ = this.store.pipe(select(getFoodItems));
 

@@ -1,4 +1,4 @@
-import { initialState, SnakeBoardState } from '../state/snake-board.state';
+import { initialState, SnakeBoardState, generateFood } from '../state/snake-board.state';
 import { SnakeBoardAction,
   PlayAction,
   PauseAction,
@@ -6,10 +6,20 @@ import { SnakeBoardAction,
   SnakeMoveAction,
   SnakeChangeDirectionAction,
   SnakeBeforeMoveAction,
+  SnakeEatAction,
+  FoodCreateAction,
+  SnakeGrowAction,
 } from '../actions/snake-board.actions';
-import { omit, map } from 'lodash-es';
-import { moveSnakeBlocks, getSnakeHead, checkWallCollision } from '../grid-mechanics';
-import { take } from 'rxjs/operators';
+import { omit, filter } from 'lodash-es';
+import {
+  moveSnakeBlocks,
+  getSnakeHead,
+  checkWallCollision,
+  checkItemsCollision,
+  appendSnakeBlock,
+  getPositionFromCell,
+  getRandomCellPosition
+} from '../grid-mechanics';
 
 /**
  * To be replaced by `createReducer` and `on(Action)` with ngrx 8. This allows us to avoid long switch blocks
@@ -65,6 +75,8 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
 
     case SnakeMoveAction.prototype.type: {
 
+      // TODO: move more logic to snakeBeforeMove effect since it is more powerful
+
       const snake = state.snake;
       const displacement = action.payload;
       const head = getSnakeHead(snake.blocks);
@@ -76,15 +88,19 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
           hasLost: true,
           snake,
         }, 'tickInterval');
-      } else {
-        return {
-          ...state,
-          snake: {
-            ...snake,
-            blocks: moveSnakeBlocks(snake.blocks, displacement),
-          },
-        };
       }
+
+      // TODO: checkSelfCollision??
+
+      const itemCollided = checkItemsCollision(state.gridSettings, action.gridMatrix, head, displacement);
+      return {
+        ...state,
+        snake: {
+          ...snake,
+          blocks: moveSnakeBlocks(snake.blocks, displacement),
+          shouldEat: itemCollided && itemCollided.type === 'food' ? itemCollided : void(0),
+        },
+      };
 
     }
 
@@ -96,6 +112,36 @@ export function snakeBoardReducer(state = initialState, action: SnakeBoardAction
           ...state.snake,
           newDirection,
         },
+      };
+    }
+
+    case SnakeEatAction.prototype.type: {
+      const food = action.payload;
+      return {
+        ...state,
+        snake: omit(state.snake, 'shouldEat'),
+        foodItems: filter(state.foodItems, f => f !== food),
+        score: state.score + 1,
+      };
+    }
+
+    case SnakeGrowAction.prototype.type: {
+      return {
+        ...state,
+        snake: appendSnakeBlock(state.gridSettings, state.snake),
+      };
+    }
+
+    case FoodCreateAction.prototype.type: {
+      return {
+        ...state,
+        foodItems: [
+          ...state.foodItems,
+          generateFood(
+            getPositionFromCell(state.gridSettings, getRandomCellPosition(state.gridSettings)),
+            state.gridSettings.CELL_SIZE
+          ),
+        ],
       };
     }
 

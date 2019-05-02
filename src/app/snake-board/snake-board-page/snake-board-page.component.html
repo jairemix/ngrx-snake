@@ -2,8 +2,10 @@
   <h2 *ngIf="!isPlaying">
     {{(hasLost$ | async) ? 'Game Over' : 'Press spacebar to start'}}
   </h2>
-  <app-snake [snake]="snake$ | async"></app-snake>
+  <app-grid-item [item]="snake$ | async"></app-grid-item>
   <app-grid-item *ngFor="let item of foodItems$ | async" [item]="item"></app-grid-item>
 </app-grid>
+
+<h2>Score {{score$ | async}}</h2>
 
 <button (click)="isPlaying ? pause() : play()">{{(isPlaying$ | async) ? 'Pause' : 'Play'}}</button>

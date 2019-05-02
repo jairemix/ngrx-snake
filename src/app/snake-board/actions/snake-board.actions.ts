@@ -1,6 +1,6 @@
 import { Direction, Vector } from './../../utils/cartesian-geometry';
 import { setProto } from 'src/app/utils/set-proto.decorator';
-import { Observable } from 'rxjs';
+import { GridItem, FoodItem } from '../state/snake-board.state';
 
 export class PlayAction {
   @setProto('[Snake Board] Play')
@@ -19,14 +19,15 @@ export class TickAction {
 }
 
 export class SnakeBeforeMoveAction {
-  @setProto('[Snake Board] Snake Before Move Action')
-  readonly type: '[Snake Board] Snake Before Move Action';
+  @setProto('[Snake Board] Snake Before Move')
+  readonly type: '[Snake Board] Snake Before Move';
 }
 
 export class SnakeMoveAction {
   @setProto('[Snake Board] Snake Move')
   readonly type: '[Snake Board] Snake Move';
-  constructor(readonly payload: Vector) {}
+  // NOTE: antipattern to pass state data as parameter (use effects???)
+  constructor(readonly payload: Vector, readonly gridMatrix: GridItem[][]) {}
 }
 
 export class SnakeChangeDirectionAction {
@@ -35,5 +36,22 @@ export class SnakeChangeDirectionAction {
   constructor(readonly payload: Direction) {}
 }
 
+export class SnakeEatAction {
+  @setProto('[Snake Board] Snake Ate')
+  readonly type: '[Snake Board] Snake Ate';
+  constructor(readonly payload: FoodItem) {}
+}
+
+export class SnakeGrowAction {
+  @setProto('[Snake Board] Snake Grow')
+  readonly type: '[Snake Board] Snake Grow';
+}
+
+export class FoodCreateAction {
+  @setProto('[Snake Board] Food Create')
+  readonly type: '[Snake Board] Food Create';
+}
+
 export type SnakeBoardAction = PlayAction | PauseAction | TickAction |
-  SnakeMoveAction | SnakeChangeDirectionAction | SnakeBeforeMoveAction;
+  SnakeMoveAction | SnakeChangeDirectionAction | SnakeBeforeMoveAction | SnakeEatAction | SnakeGrowAction |
+  FoodCreateAction;

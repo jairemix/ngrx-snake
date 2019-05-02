@@ -6,25 +6,18 @@ import { PlayAction,
   PauseAction,
   SnakeMoveAction,
   SnakeBeforeMoveAction,
+  SnakeEatAction,
+  FoodCreateAction,
+  SnakeGrowAction,
 } from '../actions/snake-board.actions';
 import { switchMap, filter, mergeMap, withLatestFrom, distinctUntilChanged, map as mapRx } from 'rxjs/operators';
 import { interval, of, empty } from 'rxjs';
-import { getSnakeVelocity, getSnakeBoardState } from '../selectors/selectors';
+import { getSnakeVelocity, getSnakeBoardState, getGridMatrix, getSnake } from '../selectors/selectors';
 
 // new syntax -> createEffect
 
 @Injectable()
 export class PartyEffects {
-
-  @Effect()
-  hasLost$ = this.store.pipe(
-    select(getSnakeBoardState),
-    mapRx(state => state.hasLost),
-    distinctUntilChanged(),
-    switchMap((hasLost) => {
-      return hasLost ? of(new PauseAction()) : empty();
-    }),
-  );
 
   @Effect()
   ticker$ = this.actions$.pipe(
@@ -48,9 +41,33 @@ export class PartyEffects {
   @Effect()
   snakeMove$ = this.actions$.pipe(
     ofType(SnakeBeforeMoveAction.prototype.type),
-    withLatestFrom(this.store.select(getSnakeVelocity)),
-    mergeMap(([_, velocity]) => {
-      return of(new SnakeMoveAction(velocity)); // displacement = velocity * 1 tick
+    withLatestFrom(this.store.select(getSnakeVelocity), this.store.select(getGridMatrix)),
+    mergeMap(([_, velocity, gridMatrix]) => {
+      return of(new SnakeMoveAction(velocity, gridMatrix)); // displacement = velocity * 1 tick
+    }),
+  );
+
+  @Effect()
+  hasLost$ = this.store.pipe(
+    select(getSnakeBoardState),
+    mapRx(state => state.hasLost),
+    distinctUntilChanged(),
+    switchMap((hasLost) => {
+      return hasLost ? of(new PauseAction()) : empty();
+    }),
+  );
+
+  @Effect()
+  hasEaten$ = this.store.pipe(
+    select(getSnake),
+    mapRx(snake => snake.shouldEat),
+    distinctUntilChanged(),
+    switchMap((hasEaten) => {
+      return hasEaten ? [
+        new SnakeEatAction(hasEaten),
+        new SnakeGrowAction(),
+        new FoodCreateAction(),
+      ] : [];
     }),
   );
 
